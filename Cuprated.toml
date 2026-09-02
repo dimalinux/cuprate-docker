@@ -1,0 +1,10 @@
+## Network to run on: "Mainnet", "Testnet", or "Stagenet"
+network = "Mainnet"
+
+## RPC Configuration (the port that wallets use). If you
+## want to restrict access to 127.0.0.1 on the container's
+## host, do it in docker-compose.yml.
+[rpc.restricted]
+address = "0.0.0.0"
+port = 18089
+enable = true

@@ -1,0 +1,23 @@
+services:
+  cuprate-node:
+    build:
+      context: .
+      # Uncomment this block to pin a specific version instead of latest.
+      # args:
+      #   CUPRATE_VERSION: v0.1.0
+    image: cuprated-local
+    container_name: cuprate-node
+    restart: unless-stopped
+    volumes:
+      # Mounts the local 'cuprate-data' folder as the container's state volume
+      - ./cuprate-data:/cuprate-data
+      # Overlay the local Cuprated.toml into the container as read-only
+      - ./Cuprated.toml:/cuprate-data/config/cuprate/Cuprated.toml:ro
+    ports:
+      # P2P Network: Exposed to the Docker host so you can port forward to it
+      # from your router to help the Monero network (optional).
+      - "18080:18080"
+      
+      # Restricted RPC. Exposed to the Docker host for wallets. If you only need wallet
+      # access from the docker host, you can restrict this to 127.0.0.1:18089:18089.
+      - "18089:18089"
