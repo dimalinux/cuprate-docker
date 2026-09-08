@@ -17,7 +17,20 @@ services:
       # P2P Network: Exposed to the Docker host so you can port forward to it
       # from your router to help the Monero network (optional).
       - "18080:18080"
-      
+
       # Restricted RPC. Exposed to the Docker host for wallets. If you only need wallet
       # access from the docker host, you can restrict this to 127.0.0.1:18089:18089.
       - "18089:18089"
+    # cuprated only binds to high ports and never execs or elevates, so drop all capabilities
+    # and block privilege escalation.
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    # Bounds Docker's capture of cuprated's stdout. Full logs are in the
+    # data volume at: cuprate-data/data/cuprate/logs/
+    logging:
+      driver: local
+      options:
+        max-size: "20m"
+        max-file: "2"
