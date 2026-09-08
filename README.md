@@ -1,4 +1,4 @@
-# docker-cuprate
+# cuprate-docker
 
 Debian-based Docker setup for [Cuprate](https://github.com/Cuprate/cuprate) releases.
 

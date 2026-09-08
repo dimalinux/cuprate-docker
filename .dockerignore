@@ -1,0 +1,19 @@
+# Version control
+.git
+.gitignore
+
+# Blockchain state directory (most important)
+cuprate-data/
+
+# Files that download-cuprate.sh creates when run locally
+cuprate_release.tar.gz
+cuprate_release/
+
+# Documentation and licenses
+*.md
+LICENSE*
+
+# IDE and Editor folders
+.idea/
+.vscode/
+*.swp
