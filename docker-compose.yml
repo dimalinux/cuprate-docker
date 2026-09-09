@@ -12,7 +12,7 @@ services:
       # Mounts the local 'cuprate-data' folder as the container's state volume
       - ./cuprate-data:/cuprate-data
       # Overlay the local Cuprated.toml into the container as read-only
-      - ./Cuprated.toml:/cuprate-data/config/cuprate/Cuprated.toml:ro
+      - ./Cuprated.toml:/config/cuprate/Cuprated.toml:ro
     ports:
       # P2P Network: Exposed to the Docker host so you can port forward to it
       # from your router to help the Monero network (optional).

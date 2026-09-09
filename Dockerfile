@@ -28,10 +28,13 @@ RUN apt-get update && \
   apt-get install -y --no-install-recommends ca-certificates libstdc++6 && \
   rm -rf /var/lib/apt/lists/*
 
-# Create the non-root user and the state directory
+# Create the non-root user, the state directory, and the config directory.
+# The config dir lives outside the mounted volume and is pre-created here so the
+# read-only Cuprated.toml bind mount lands in a cuprate-owned directory instead
+# of one the Docker daemon would otherwise create as root.
 RUN useradd -m -d /home/cuprate -s /bin/bash cuprate && \
-  mkdir -p /cuprate-data && \
-  chown cuprate:cuprate /cuprate-data
+  mkdir -p /cuprate-data /config/cuprate && \
+  chown -R cuprate:cuprate /cuprate-data /config
 
 # Copy/install the cuprated binary from the builder image
 COPY --from=builder /cuprate-build/cuprate-release/cuprated /usr/local/bin/
@@ -40,13 +43,14 @@ RUN chmod +x /usr/local/bin/cuprated
 # Switch to the non-root user
 USER cuprate
 
-# By default, cuprated scatters its state in several places.
-# - ~/.local/share/cuprate/ contains the blockchain database.
-# - ~/.config/cuprate/ contains the Cuprated.toml configuration file.
-# - ~/.cache/cuprate/ contains the P2P network address book.
-# We override these XDG environment variables to funnel everything into our single mounted volume.
+# cuprated stores its files under XDG base dirs. Remap them so all persistent
+# state is in the mounted `/cuprate-data` folder, and our repo-supplied config
+# gets mounted in (read-only) at /config/cuprate/Cuprated.toml:
+#   ~/.local/share/cuprate/ (blockchain data) -> /cuprate-data/data/cuprate/
+#   ~/.config/cuprate/ (Cuprated.toml) -> /config/cuprate/
+#   ~/.cache/cuprate/ (P2P address book) -> /cuprate-data/cache/cuprate/
 ENV XDG_DATA_HOME=/cuprate-data/data
-ENV XDG_CONFIG_HOME=/cuprate-data/config
+ENV XDG_CONFIG_HOME=/config
 ENV XDG_CACHE_HOME=/cuprate-data/cache
 
 # Expose standard Monero network ports (Mainnet P2P, Restricted RPC)
